@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-const url = 'https://api.github.com/users/QuincyLarsonsss';
+const url = 'https://api.github.com/users/QuincyLarsons';
 
 const MultipleReturns = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,11 +15,10 @@ const MultipleReturns = () => {
         setIsLoading(false);
         setUser(user);
       } else if (userResponse.status > 300 || userResponse.status < 200) {
-        setIsError(true);
-        console.log('error');
         throw new Error(userResponse.status);
       }
     } catch (error) {
+      setIsLoading(false);
       setIsError(true);
       console.log('sdad');
     }
