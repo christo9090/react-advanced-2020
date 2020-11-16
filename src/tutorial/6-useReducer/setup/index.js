@@ -1,26 +1,45 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useRef } from 'react';
 import Modal from './Modal';
 import { data } from '../../../data';
-// reducer function
+import reducer from './reducer';
+
+const defaultState = {
+  people: [...data],
+  isModalOpen: false,
+  modalContent: 'hello world',
+};
 
 const Index = () => {
   const [name, setName] = useState('');
-  const [people, setPeople] = useState(data);
-  const [showModel, setShowModel] = useState(false);
+
+  const [state, dispatch] = useReducer(reducer, defaultState);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name) {
-      setShowModel(true);
-      setPeople([...people, { name }]);
+      const newItem = { id: new Date().getTime().toString(), name };
+      dispatch({ type: 'ADD_ITEM', payload: newItem });
+      setName('');
     } else {
-      setShowModel(true);
+      dispatch({ type: 'NO_VALUE' });
     }
   };
 
+  const closeModal = () => {
+    dispatch({ type: 'CLOSE_MODAL' });
+  };
+
+  const handleRemove = (id) => {
+    const filteredPeople = state.people.filter((person) => person.id !== id);
+    dispatch({ type: 'REMOVE_PERSON', payload: filteredPeople });
+  };
+
+  //console.log(state);
   return (
     <>
-      {showModel && <Modal />}
+      {state.isModalOpen && (
+        <Modal modelContent={state.modalContent} closeModal={closeModal} />
+      )}
       <form className="form" onSubmit={handleSubmit}>
         <div>
           <input
@@ -29,8 +48,22 @@ const Index = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <button type="submit">Submit</button>
-      </form>{' '}
+        <button type="submit">Add Person</button>
+      </form>
+      {state.people.map((p) => {
+        return (
+          <div key={p.id} className="item">
+            <h4>{p.name}</h4>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => handleRemove(p.id)}
+            >
+              Remove
+            </button>
+          </div>
+        );
+      })}
     </>
   );
 };
