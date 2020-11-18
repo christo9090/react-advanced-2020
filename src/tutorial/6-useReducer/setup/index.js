@@ -56,7 +56,7 @@ const Index = () => {
             <h4>{p.name}</h4>
             <button
               type="button"
-              className="btn"
+              className=""
               onClick={() => handleRemove(p.id)}
             >
               Remove
